@@ -1,0 +1,19 @@
+{
+  "name": "loc-intl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "eslint": "^4.4.1",
+    "tiny-test": "^0.11.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  }
+}
