@@ -1,14 +1,14 @@
-# Localization (2.52Kb minified)
+# Tongue JS (2.52Kb minified)
 This is a micro library for adding localization to a project. It supports advanced features such as nested filters.
 
 ## Installation
 ```
-$ npm i l-int
+$ npm i tongue-js
 ```
 
 ## Basic Usage
 ```js
-const L = require("l-intl");
+const L = require("tongue-js");
 const l = new L({
   defs: {
     frog: "grenouille",
@@ -21,7 +21,7 @@ l.get("frog"); // grenouille
 
 ## Filters
 ```js
-const L = require("l-intl");
+const L = require("tongue-js");
 const l = new L({
   defs: {
     frog: "grenouille",
@@ -46,7 +46,7 @@ l.get("{{ pluralize 2 {{frog}} {{frogs}} }}"); // frogs
 
 ## Nesting filters
 ```js
-const L = require("l-intl");
+const L = require("tongue-js");
 const l = new L({
   defs: {
     frog: "grenouille",
