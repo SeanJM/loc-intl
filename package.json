@@ -10,12 +10,11 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "eslint": "^4.4.1",
-    "tiny-test": "^0.11.3",
-    "uglify-js": "^3.4.6"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "uglify-js": "^3.4.6",
+    "tiny-test": "^0.11.3",
+    "eslint": "^4.4.1",
     "nodemon": "^1.18.3"
   }
 }
