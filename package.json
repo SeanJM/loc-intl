@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.min.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SeanJM/tongue-js.git"
+  },
   "scripts": {
     "test": "nodemon index.test.js",
     "build": "node node_modules/uglify-js/bin/uglifyjs index.js --compress --mangle --comments all --output index.min.js && node -e \"const fs = require('fs'); console.log('Done - ' + (Math.round((fs.lstatSync('index.min.js').size / 1024) * 100) / 100) + 'Kb');\""
