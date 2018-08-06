@@ -237,5 +237,16 @@ tinyTest(function (test, load) {
   })
     .isEqual("Test One");
 
+  test("Multiple expressions with path", function () {
+    var l = new Language({
+      defs: {
+        label: {
+          "date range": "Date range"
+        }
+      }
+    });
+    return l.get("{{label.date range}}: {{0}} - {{1}}", "2018-06-01", "2018-08-13");
+  }).isDeepEqual("Date range: 2018-06-01 - 2018-08-13");
+
   load();
 });

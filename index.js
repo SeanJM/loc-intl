@@ -80,12 +80,12 @@
     var right = expression.string.substring(expression.end, expression.string.length);
     var center = expression.value;
 
-    if (self.defs.hasOwnProperty(center)) {
-      center = self.defs[center];
+    if (get(self.defs, center)) {
+      center = get(self.defs, center);
     } else if (tokens.length && typeof tokens[Number(center)] !== "undefined") {
       center = tokens[Number(center)];
-    } else if (template.hasOwnProperty(center)) {
-      center = template[center];
+    } else if (get(template, center)) {
+      center = get(template, center);
     }
 
     center = "" + center;
