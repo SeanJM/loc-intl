@@ -1,17 +1,19 @@
 {
-  "name": "loc-intl",
-  "version": "1.0.0",
+  "name": "l-intl",
+  "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.min.js",
   "scripts": {
-    "test": "nodemon index.test.js"
+    "test": "nodemon index.test.js",
+    "build": "node node_modules/uglify-js/bin/uglifyjs index.js --compress --mangle --comments all --output index.min.js && node -e \"const fs = require('fs'); console.log('Done - ' + (Math.round((fs.lstatSync('index.min.js').size / 1024) * 100) / 100) + 'Kb');\""
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "eslint": "^4.4.1",
-    "tiny-test": "^0.11.3"
+    "tiny-test": "^0.11.3",
+    "uglify-js": "^3.4.6"
   },
   "devDependencies": {
     "nodemon": "^1.18.3"

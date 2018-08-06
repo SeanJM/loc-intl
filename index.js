@@ -2,9 +2,113 @@ function normalizePath(path) {
   return [].concat(path).join(".").split(".");
 }
 
+function getExpression(str) {
+  var i = str.indexOf("{{");
+  var o = 1;
+  var n = str.length;
+  var s = i;
+
+  if (i > -1) {
+    i += 1;
+    while (i < n && o > 0) {
+      if (str.substring(i, i + 2) === "{{") {
+        i += 1;
+        o += 1;
+      } else if (str.substring(i, i + 2) === "}}") {
+        i += 2;
+        o -= 1;
+      } else {
+        i++;
+      }
+    }
+
+    return {
+      outter: str.substring(s, i),
+      string: str,
+      start: s,
+      end: i,
+      value: str.substring(s + 2, i - 2).trim(),
+    };
+  }
+
+  return null;
+}
+
+function filterExpression(self, value, template, tokens) {
+  var expression;
+
+  var split = value.split(" ");
+  var fn = self.filter[split[0]];
+  var str = split.slice(1).join(" ");
+  var args = [""];
+  var index = 0;
+
+  var i = -1;
+  var n = str.length;
+
+  if (fn) {
+    while (++i < n) {
+      if (!args[index]) {
+        args[index] = "";
+      }
+
+      if (str.substring(i, i + 2) === "{{") {
+        expression = getExpression(str.substring(i));
+        if (expression) {
+          i += expression.end;
+          args[index] = evaluateExpression(self, expression.outter, template, tokens);
+          index += 1;
+        } else {
+          args[index] += str[i];
+        }
+      } else if (/\s/.test(str[i]) && !/\s/.test(str[i - 1])) {
+        index += 1;
+      } else {
+        args[index] += str[i];
+      }
+    }
+
+    return fn.apply(self, args);
+  }
+
+  return value;
+}
+
+function replaceExpression(self, expression, template, tokens) {
+  var left = expression.string.substring(0, expression.start);
+  var right = expression.string.substring(expression.end, expression.string.length);
+  var center = expression.value;
+
+  if (self.defs.hasOwnProperty(center)) {
+    center = self.defs[center];
+  } else if (tokens.length && typeof tokens[Number(center)] !== "undefined") {
+    center = tokens[Number(center)];
+  } else if (template.hasOwnProperty(center)) {
+    center = template[center];
+  }
+
+  center = "" + center;
+  center = filterExpression(self, center, template, tokens);
+  center = evaluateExpression(self, center, template, tokens);
+
+  return left + center + right;
+}
+
+function evaluateExpression(self, string, template, tokens) {
+  var res = string;
+  var expression = getExpression(res);
+
+  while (expression) {
+    res = replaceExpression(self, expression, template, tokens);
+    expression = getExpression(res);
+  }
+
+  return res;
+}
+
 function get(obj, path) {
-  let p = obj;
-  let s = normalizePath(path);
+  var p = obj;
+  var s = normalizePath(path);
 
   for (var i = 0, n = s.length - 1; i < n; i++) {
     if (p && typeof p[s[i]] !== "undefined") {
@@ -17,18 +121,10 @@ function get(obj, path) {
   return p[s.slice(-1)[0]];
 }
 
-function replaceTokens(tokens) {
-  return function (match, token) {
-    return !/^[0-9]+\.[0-9]+$/.test(token)
-      ? tokens[Number(token)]
-      : match;
-  };
-}
-
 /**
- * @param {object} props
- * @param {object} props.defs Language definitions
- * @param {object} props.filter Language filters
+ * @param {object=} props
+ * @param {object=} props.defs Language definitions
+ * @param {object=} props.filter Language filters
 */
 
 function Language(props) {
@@ -46,16 +142,22 @@ Language.prototype.onLoad = function (callback) {
 };
 
 Language.prototype.offLoad = function (callback) {
-  let index = this.onloadSubscribers.indexOf(callback);
+  var index = this.onloadSubscribers.indexOf(callback);
   if (index > -1) {
     this.onloadSubscribers.splice(index, 1);
   }
   return this;
 };
 
+/**
+ * @param {object=} props
+ * @param {object=} props.defs Language definitions
+ * @param {object=} props.filter Language filters
+*/
+
 Language.prototype.load = function (props) {
-  let i = -1;
-  let n = this.onloadSubscribers.length;
+  var i = -1;
+  var n = this.onloadSubscribers.length;
 
   if (props && props.defs) {
     Object.assign(this.defs, props.defs);
@@ -78,59 +180,26 @@ Language.prototype.load = function (props) {
   return this;
 };
 
-Language.prototype.get = function (path, template = {}) {
-  const raw = get(this.defs, path) || normalizePath(path).join(".");
-  const tokens = [];
-  let i = 1;
-  const n = arguments.length;
+/**
+ * @param {string|array} path
+ * @param {object=} template A template to process
+ * @returns {string|undefined};
+*/
+
+Language.prototype.get = function (path, template) {
+  var raw = get(this.defs, path) || normalizePath(path).join(".");
+  var tokens = [];
+  var i = 0;
+  var n = arguments.length;
+
+  template = template || {};
 
   while (++i < n) {
     tokens.push(arguments[i]);
   }
 
   return typeof raw === "string"
-    ? raw.replace(/\{\{([^}]+)\}\}/g, (a, b) => {
-      // {{ filter argument argument argument }}
-      // -> [ Function, Array ]
-      // {{ variable | filter | filter }}
-      // -> [ String, Function, Function ]
-
-      return b
-        .replace(/\$([0-9]+(?=\.[0-9]+|))/, replaceTokens(a))
-        .split("|")
-        .map((a) => {
-          let b = a
-            .split(" ")
-            .map((a) => a.trim())
-            .filter((a) => a);
-
-          b[0] = (
-            this.filter[b[0]]
-              ? this.filter[b[0]]
-              : template[b[0]] || b[0]
-          );
-
-          for (var i = 1, n = b.length; i < n; i++) {
-            b[i] = template.hasOwnProperty(b[i]) ? template[b[i]] : b[i];
-          }
-
-          if (typeof b[0] === "function") {
-            if (b.length > 1) {
-              return b[0].apply(
-                this,
-                b.slice(1)
-              );
-            } else {
-              return b[0];
-            }
-          }
-
-          return b.join(" ");
-        })
-        .reduce((a, b) => {
-          return b(a);
-        });
-    })
+    ? evaluateExpression(this, raw, template, tokens)
     : raw;
 };
 
