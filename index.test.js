@@ -248,5 +248,15 @@ tinyTest(function (test, load) {
     return l.get("{{label.date range}}: {{0}} - {{1}}", "2018-06-01", "2018-08-13");
   }).isDeepEqual("Date range: 2018-06-01 - 2018-08-13");
 
+  test("Replace value 0 - template", function () {
+    var l = new Language();
+    return l.get("{{x}}", { x: 0 });
+  }).isDeepEqual("0");
+
+  test("Replace value 0 - token", function () {
+    var l = new Language();
+    return l.get("{{0}}", 0);
+  }).isDeepEqual("0");
+
   load();
 });

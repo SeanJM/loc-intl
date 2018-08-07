@@ -197,7 +197,9 @@
     var i = 0;
     var n = arguments.length;
 
-    template = template || {};
+    template = typeof template === "undefined"
+      ? {}
+      : template;
 
     while (++i < n) {
       tokens.push(arguments[i]);
