@@ -1,4 +1,4 @@
-# Tongue JS (2.36Kb minified)
+# Tongue JS (2.39Kb minified)
 This is a micro library for adding localization to a project. It supports advanced features such as nested filters.
 
 ## Installation

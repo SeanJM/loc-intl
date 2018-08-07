@@ -80,12 +80,16 @@
     var right = expression.string.substring(expression.end, expression.string.length);
     var center = expression.value;
 
-    if (tokens.length && typeof tokens[Number(center)] !== "undefined") {
-      center = tokens[Number(center)];
-    } else if (get(template, center)) {
-      center = get(template, center);
-    } else if (get(self.defs, center)) {
-      center = get(self.defs, center);
+    var getToken = tokens[Number(center)];
+    var getTemplate = get(template, center);
+    var getDefinitions = get(self.defs, center);
+
+    if (tokens.length && typeof getToken !== "undefined" && getToken != null) {
+      center = getToken;
+    } else if (typeof getTemplate !== "undefined" && getTemplate != null) {
+      center = getTemplate;
+    } else if (typeof getDefinitions !== "undefined" && getDefinitions != null) {
+      center = getDefinitions;
     }
 
     center = "" + center;
