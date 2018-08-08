@@ -38,10 +38,10 @@ const l = new L({
 });
 
 l.get("frog"); // grenouille
-l.filters.currency(500); // $ 500
+l.filter.currency(500); // $ 500
 l.get("{{ currency 500 }}"); // $ 500
 l.get("{{ pluralize 5 cat cats }}"); // cats
-l.get("{{ pluralize 2 {{frog}} {{frogs}} }}"); // frogs
+l.get("{{ pluralize 2 {{frog}} {{frogs}} }}"); // grenouille
 ```
 
 ## Nesting filters
@@ -62,7 +62,7 @@ const l = new L({
   }
 });
 
-l.get("{{ capitalCase {{ pluralize 2 {{frog}} {{frogs}} }} }}"); // Frogs
+l.get("{{ capitalCase {{ pluralize 2 {{frog}} {{frogs}} }} }}"); // Grenouilles
 ```
 
 # License
