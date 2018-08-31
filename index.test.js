@@ -1,5 +1,8 @@
 const tinyTest = require("tiny-test");
-const Language = require("./index.min");
+const src = process.env.NODE_ENV === "production" ? "./index.min" : "./index";
+const Language = require(src);
+
+console.log(" Source: \"" + src + "\"");
 
 tinyTest(function (test, load) {
   test("Basic", function () {
@@ -260,19 +263,15 @@ tinyTest(function (test, load) {
 
   test("Get null", function () {
     var l = new Language();
-    return l.get(null) == null;
+    return l.get(null) === "";
   }).isEqual(true);
 
-  test("Get null value to filter", function () {
+  test("Filter returns NaN", function () {
     var l = new Language({
-      filters: {
-        something(value) {
-          return value;
-        }
-      }
+      filters: { toDays: () => 1/0 }
     });
-    return l.get("{{ something {{Nothing}} }}", { Nothing: null }) == null;
-  }).isEqual(true);
+    return l.get("{{ toDays maxTimeBetween }}");
+  }).isEqual("Infinity");
 
   load();
 });

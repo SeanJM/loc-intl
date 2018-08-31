@@ -4,7 +4,7 @@
   }
 
   function getExpression(str) {
-    var i = str.indexOf("{{");
+    var i = (str + "").indexOf("{{");
     var o = 1;
     var n = str.length;
     var s = i;

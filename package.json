@@ -8,8 +8,10 @@
     "url": "https://github.com/SeanJM/tongue-js.git"
   },
   "scripts": {
-    "test": "nodemon index.test.js",
-    "build": "node node_modules/uglify-js/bin/uglifyjs index.js -o index.min.js --config-file \"minify.config.json\" && node -e \"const fs = require('fs'); console.log('Done - ' + (Math.round((fs.lstatSync('index.min.js').size / 1024) * 100) / 100) + 'Kb');\""
+    "test": "NODE_ENV=test nodemon index.test.js",
+    "minify": "node node_modules/uglify-js/bin/uglifyjs index.js -o index.min.js --config-file \"minify.config.json\"",
+    "logSize": "node -e \"const fs = require('fs'); console.log('Done - ' + (Math.round((fs.lstatSync('index.min.js').size / 1024) * 100) / 100) + 'Kb');\"",
+    "build": "npm run minify && NODE_ENV=production node index.test.js && npm run logSize"
   },
   "keywords": [],
   "author": "",
