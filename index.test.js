@@ -258,5 +258,21 @@ tinyTest(function (test, load) {
     return l.get("{{0}}", 0);
   }).isDeepEqual("0");
 
+  test("Get null", function () {
+    var l = new Language();
+    return l.get(null) == null;
+  }).isEqual(true);
+
+  test("Get null value to filter", function () {
+    var l = new Language({
+      filters: {
+        something(value) {
+          return value;
+        }
+      }
+    });
+    return l.get("{{ something {{Nothing}} }}", { Nothing: null }) == null;
+  }).isEqual(true);
+
   load();
 });
