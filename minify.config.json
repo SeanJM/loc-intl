@@ -1,0 +1,11 @@
+{
+  "compress": true,
+  "output": {
+    "comments": "all",
+    "beautify": false
+  },
+  "sourceMap": {
+    "filename": "index.min.js",
+    "url": "index.min.js.map"
+  }
+}

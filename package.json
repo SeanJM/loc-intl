@@ -1,6 +1,6 @@
 {
   "name": "tongue-js",
-  "version": "0.1.9",
+  "version": "0.1.8",
   "description": "",
   "main": "index.min.js",
   "repository": {
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "nodemon index.test.js",
-    "build": "node node_modules/uglify-js/bin/uglifyjs index.js --compress --mangle --comments all --output index.min.js --source-map \"root=index.js,url=index.min.js.map\" && node -e \"const fs = require('fs'); console.log('Done - ' + (Math.round((fs.lstatSync('index.min.js').size / 1024) * 100) / 100) + 'Kb');\""
+    "build": "node node_modules/uglify-js/bin/uglifyjs index.js -o index.min.js --config-file \"minify.config.json\" && node -e \"const fs = require('fs'); console.log('Done - ' + (Math.round((fs.lstatSync('index.min.js').size / 1024) * 100) / 100) + 'Kb');\""
   },
   "keywords": [],
   "author": "",
